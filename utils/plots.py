@@ -12,6 +12,7 @@ from urllib.error import URLError
 import cv2
 import matplotlib
 import matplotlib.pyplot as plt
+import matplotlib.font_manager as font_manager
 import numpy as np
 import pandas as pd
 import seaborn as sn
@@ -26,6 +27,15 @@ from utils.metrics import fitness
 RANK = int(os.getenv('RANK', -1))
 matplotlib.rc('font', **{'size': 11})
 matplotlib.use('Agg')  # for writing to files only
+
+# Load font file
+module_path = os.path.dirname(__file__)
+font_dir = os.path.join(os.path.split(module_path)[0], 'myfont', 'SimHei.ttf')
+font_manager.fontManager.addfont(font_dir)
+
+# Set font in Matplotlib
+plt.rcParams['font.family'] = 'SimHei'
+sn.set(font='SimHei')
 
 
 class Colors:

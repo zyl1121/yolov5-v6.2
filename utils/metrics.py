@@ -3,13 +3,23 @@
 Model validation metrics
 """
 
+import os
 import math
 import warnings
 from pathlib import Path
 
 import matplotlib.pyplot as plt
+import matplotlib.font_manager as font_manager
 import numpy as np
 import torch
+
+# Load font file
+module_path = os.path.dirname(__file__)
+font_dir = os.path.join(os.path.split(module_path)[0], 'myfont', 'SimHei.ttf')
+font_manager.fontManager.addfont(font_dir)
+
+# Set font in Matplotlib
+plt.rcParams['font.family'] = 'SimHei'
 
 
 def fitness(x):
@@ -187,13 +197,13 @@ class ConfusionMatrix:
     def plot(self, normalize=True, save_dir='', names=()):
         try:
             import seaborn as sn
-
+            rc = {'font.sans-serif': 'SimHei', 'axes.unicode_minus': False}
             array = self.matrix / ((self.matrix.sum(0).reshape(1, -1) + 1E-9) if normalize else 1)  # normalize columns
             array[array < 0.005] = np.nan  # don't annotate (would appear as 0.00)
 
-            fig = plt.figure(figsize=(12, 9), tight_layout=True)
+            fig = plt.figure(figsize=(16, 9), tight_layout=False)
             nc, nn = self.nc, len(names)  # number of classes, names
-            sn.set(font_scale=1.0 if nc < 50 else 0.8)  # for label size
+            sn.set(font_scale=1.0 if nc < 50 else 0.8, font='SimHei', rc=rc)  # for label size
             labels = (0 < nn < 99) and (nn == nc)  # apply names to ticklabels
             with warnings.catch_warnings():
                 warnings.simplefilter('ignore')  # suppress empty matrix RuntimeWarning: All-NaN slice encountered
@@ -202,6 +212,8 @@ class ConfusionMatrix:
                            annot_kws={
                                "size": 8},
                            cmap='Blues',
+                           linewidths=0.5,
+                           linecolor='grey',
                            fmt='.2f',
                            square=True,
                            vmin=0.0,
